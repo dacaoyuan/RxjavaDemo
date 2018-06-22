@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -13,6 +15,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        method05();
+        method022();
     }
 
 
@@ -156,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
     private void method022() {
 
         Observable.just("hello world1", "hello world2")
+                //.delay(3, TimeUnit.SECONDS)
                 .subscribe(new Subscriber<String>() {
                     @Override
                     public void onCompleted() {
@@ -263,6 +267,65 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
+     * 变换操作符 map  的用法
+     */
+    private void method06() {
+        final String Host = "http://blog.csdn.net/";
+        Observable.just("itachi85")
+                .map(new Func1<String, String>() {
+                    @Override
+                    public String call(String s) {
+                        return Host + s;
+                    }
+                }).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                Log.i(TAG, "method06 call: s=" + s);
+            }
+        });
+
+
+    }
+
+
+    /**
+     * 变换操作符 flatMap cast  的用法
+     */
+    private void method07() {
+        final String Host = "http://blog.csdn.net/";
+
+        List<String> mList = new ArrayList<>();
+        mList.add("itachi85");
+        mList.add("itachi86");
+        mList.add("itachi87");
+
+
+        for (String s : mList) {
+            String s1 = Host + s;
+            Log.i(TAG, "method06 call: s1=" + s1);
+        }
+
+
+        //flatMap 的合并允许交叉，也就是说可能会交错的发送事件，最终结果的顺序可能并不是原始Observable发送时的顺序。
+        Observable.from(mList)
+                .flatMap(new Func1<String, Observable<?>>() {
+                    @Override
+                    public Observable<?> call(String s) {
+                        return Observable.just(Host + s);
+                    }
+                }).cast(String.class).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                Log.i(TAG, "method06 call: s=" + s);
+            }
+        });
+
+
+    }
+
+    /**
+     * 辅助操作符
+     * <p>
      * subscribeOn ：用于指定Observable自身在哪个线程中运行
      * observeOn :用于指定Observer 所运行的线性，也就是发射出来数据在哪个线程中使用
      */
@@ -300,16 +363,16 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-       // 指定Observable自身在新的子线程中运行
+        // 指定Observable自身在新的子线程中运行
         Observable observable2 = observable1.subscribeOn(Schedulers.newThread());
 
         // 指定 Observer 在主线程中运行
         Observable observable3 = observable2.observeOn(AndroidSchedulers.mainThread());
 
         observable3.subscribe(subscriber);
-        
-        
-        
+
+
+
          /*// 上面的代码改成链式调用就是下面的代码
         Observable.create(new Observable.OnSubscribe<String>() {
 
@@ -342,6 +405,29 @@ public class MainActivity extends AppCompatActivity {
                 });
 
     }*/
+
+
+    }
+
+
+    /**
+     * 辅助操作符 delay  的用法
+     * <p>
+     * delay 操作符让原始 Observable 在发射每项数据之前都暂停一段指定的时间段
+     */
+    private void method08() {
+        Observable.create(new Observable.OnSubscribe<Long>() {
+            @Override
+            public void call(Subscriber<? super Long> subscriber) {
+                long l = System.currentTimeMillis() / 1000;
+                subscriber.onNext(l);
+            }
+        }).delay(3, TimeUnit.SECONDS).subscribe(new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+                Log.i(TAG, "call: delay:" + (System.currentTimeMillis() / 1000 - aLong));
+            }
+        });
 
 
     }
