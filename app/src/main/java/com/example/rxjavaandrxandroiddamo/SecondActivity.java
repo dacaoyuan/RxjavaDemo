@@ -7,6 +7,8 @@ import android.util.Log;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -29,7 +31,7 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_second);
 
 
-        method4();
+        method5();
 
     }
 
@@ -49,6 +51,29 @@ public class SecondActivity extends AppCompatActivity {
 
 
     }
+
+    /**
+     * 创建操作符 form 的用法
+     * <p>
+     */
+    private void method5() {
+        List<String> mList = new ArrayList<>();
+        mList.add("1q");
+        mList.add("2w");
+        mList.add("3e");
+
+
+        Observable.fromIterable(mList)
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String strings) throws Exception {
+                        Log.i(TAG, "accept: strings="+strings);
+                    }
+                });
+
+    }
+
+
 
     /**
      * subscribeOn ：用于指定Observable自身在哪个线程中运行

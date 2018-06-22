@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        method022();
+        method10();
     }
 
 
@@ -228,6 +228,38 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void call(Long aLong) {
                         Log.i(TAG, "interval call: along=" + aLong);
+                    }
+                });
+
+    }
+
+
+    /**
+     * 创建操作符 form 的用法
+     * <p>
+     */
+    private void method10() {
+        List<String> mList = new ArrayList<>();
+        mList.add("1");
+        mList.add("2");
+        mList.add("3");
+
+
+        Observable.from(mList)
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i(TAG, "onCompleted: ");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, "onError: ");
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        Log.i(TAG, "onNext: s=" + s);
                     }
                 });
 
