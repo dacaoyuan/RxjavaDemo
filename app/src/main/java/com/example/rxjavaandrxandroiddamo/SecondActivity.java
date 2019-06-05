@@ -67,12 +67,11 @@ public class SecondActivity extends AppCompatActivity {
                 .subscribe(new Consumer<String>() {
                     @Override
                     public void accept(String strings) throws Exception {
-                        Log.i(TAG, "accept: strings="+strings);
+                        Log.i(TAG, "accept: strings=" + strings);
                     }
                 });
 
     }
-
 
 
     /**
